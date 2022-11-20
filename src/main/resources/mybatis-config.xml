@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MyBatis初始化配置 -->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--设置单个别名-->
+<!--    <typeAliases>-->
+<!--        <typeAlias type="com.itheima.com.atguigu.entity.User" alias="User"/>-->
+<!--    </typeAliases>-->
+<!--    &lt;!&ndash;批量设置别名 该包下的类名就是别名&ndash;&gt;-->
+    <!--settings标签中的配置为全局配置-->
+    <settings>
+        <!--开启日志-->
+         <setting name="logImpl" value="LOG4J"/>
+        <!--开启驼峰命名规则-->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <!--mysql默认开启-->
+        <setting name="cacheEnabled" value="true"/>
+        <!--因为mybatis对所有的null都映射的是原生Jdbc的OTHER类型,Oracle不能识别other类型 所以修改为NULL-->
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+    <!--配置支持多数据库厂商
+    DB_VENDOR VendorDatabaseIdProvider
+    作用就是得到数据库厂商的标识，mybatis就能根据数据库厂商标识来执行不同的sql
+    connection.getDatabaseProductName()
+    -->
+    <databaseIdProvider type="DB_VENDOR">
+        <!--注意数据库的别名为固定值 -->
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+        <property name="SQL Server" value="sqlserver"/>
+    </databaseIdProvider>
+
+</configuration>

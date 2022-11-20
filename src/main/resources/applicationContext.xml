@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+       <!--配置包扫描 排除@controller注解的其它注解-->
+<!--       <context:component-scan base-package="com.atguigu"></context:component-scan>-->
+       <context:component-scan base-package="com.atguigu" use-default-filters="false">
+            <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+       </context:component-scan>
+
+       <context:property-placeholder location="classpath:jdbc.properties"/>
+       <!--spring控制业务逻辑，数据库连接 事务控制 AOP-->
+       <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="comboPooledDataSource">
+             <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+             <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test"/>
+             <property name="user" value="root"/>
+             <property name="password" value="root"/>
+       </bean>
+
+       <!--配置Spring管理数据库事务-->
+       <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="dataSourceTransactionManager">
+             <property name="dataSource" ref="comboPooledDataSource"/>
+       </bean>
+       <!--开启事务注解驱动-->
+       <tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+
+       <!--spring整合mybatis 让Spring启动时创建sqlSessionFactory-->
+       <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+           <property name="dataSource" ref="comboPooledDataSource"/>
+           <property name="typeAliasesPackage" value="com.atguigu.entity"/>
+           <!--指定mapper配置文件的位置 也就是SQL是通过注解还是通过XML定义-->
+           <property name="mapperLocations" value="classpath:com/atguigu/mapper/*.xml"/>
+           <!--指定mybatis全局文件的配置-->
+           <property name="configLocation" value="classpath:mybatis-config.xml"/>
+       </bean>
+
+       <!--扫描所有的mapper接口的实现，让这些mapper能够自动注入;base-package:指定mapper接口的包名-->
+<!--       <mybatis-spring:scan base-package="com.atguigu.dao"/>-->
+       <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+           <property name="basePackage" value="com.atguigu.mapper"/>
+       </bean>
+</beans>
